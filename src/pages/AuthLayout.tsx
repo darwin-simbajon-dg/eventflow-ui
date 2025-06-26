@@ -1,6 +1,8 @@
 // src/pages/AuthLayout.tsx
 import React from 'react';
 import { eventBus } from '../service/eventBus';
+import schoolLogo from '../assets/school-logo.png';
+
 
 const AuthLayout: React.FC = () => {
   return (
@@ -18,25 +20,36 @@ const AuthLayout: React.FC = () => {
             <div className="col-lg-4 col-md-7">
               <div className="card border-0 mb-0">
                 <div className="card-header bg-transparent">
-                  <h5 className="text-dark text-center mt-2 mb-3">Sign in</h5>
-                  <div className="btn-wrapper text-center">
-                    {/* <button className="btn btn-neutral btn-icon btn-sm mb-0">
-                      <img
-                        className="w-30"
-                        src="/assets/img/logos/github.svg"
-                        alt="github"
-                      />
-                      Github
-                    </button>
-                    <button className="btn btn-neutral btn-icon btn-sm mb-0">
-                      <img
-                        className="w-30"
-                        src="/assets/img/logos/google.svg"
-                        alt="google"
-                      />
-                      Google
-                    </button> */}
+                  <div className="card-header bg-transparent text-center">
+                    {/* School Logo */}
+                    <img
+                      src={schoolLogo}
+                      alt="School Logo"
+                      style={{
+                        width: "100px",
+                        height: "100px",
+                        objectFit: "contain",
+                        marginBottom: "1rem",
+                      }}
+                    />
+
+                    <h5 className="text-dark mt-2 mb-3">Sign in</h5>
+
+                    {/* Optional buttons (commented out) */}
+                    {/* 
+  <div className="btn-wrapper text-center">
+    <button className="btn btn-neutral btn-icon btn-sm mb-0">
+      <img className="w-30" src="/assets/img/logos/github.svg" alt="github" />
+      Github
+    </button>
+    <button className="btn btn-neutral btn-icon btn-sm mb-0">
+      <img className="w-30" src="/assets/img/logos/google.svg" alt="google" />
+      Google
+    </button>
+  </div>
+  */}
                   </div>
+
                 </div>
                 <div className="card-body px-lg-5 pt-0">
                   {/* <div className="text-center text-muted mb-4">
@@ -99,7 +112,7 @@ const AuthLayout: React.FC = () => {
             </div>
           </div>
         </div>
-      </div>  
+      </div>
     </main>
   );
 };
