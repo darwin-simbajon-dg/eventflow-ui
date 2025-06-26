@@ -62,22 +62,12 @@
   font-size: 0.875rem;
 }
 
-
-.Toastify__toast--success {
-  background: #2dce89; /* Argon green */
-  color: white;
-}
-
-.Toastify__toast--error {
-  background: #fb6340; /* Argon orange */
-  color: white;
-}
-
-.Toastify__toast--info {
-  background: #11cdef; /* Argon blue */
-  color: white;
-}
-
-.Toastify__progress-bar {
-  background: white;
+.global-spinner-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 2000;
 }
