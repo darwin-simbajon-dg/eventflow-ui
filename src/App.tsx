@@ -8,6 +8,8 @@ import { useEventSubscriber } from './service/useEventSubscriber';
 import { SnackbarProvider } from 'notistack'
 import { MaterialDesignContent } from 'notistack'
 import { styled } from '@mui/material/styles';
+import { LoadingProvider } from './service/LoadingContextType';
+import GlobalSpinner from './components/Spinner';
 
 function App() {
   const event = useEventSubscriber();
@@ -27,6 +29,8 @@ function App() {
 
   return (
     <>
+    <LoadingProvider> 
+    <GlobalSpinner />
     <SnackbarProvider maxSnack={3} anchorOrigin={
       {
         vertical: 'top',
@@ -42,6 +46,7 @@ function App() {
       {event.showLogin && <AuthLayout />}
       {event.userAuthenticated && <Dashboard />}
     </div>
+    </LoadingProvider>
     </>
   );
 }

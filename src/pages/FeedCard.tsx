@@ -1,11 +1,20 @@
 import React from "react";
 import { enqueueSnackbar } from "notistack";
+import { useLoading } from "../service/LoadingContextType";
 
 const FeedCard: React.FC = () => {
+  const { setLoading } = useLoading();
   const handleAddEvent = () => {
     enqueueSnackbar("Add Event button clicked!", {
       variant: "info"
     });
+
+    //create a delay to simulate loading
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      enqueueSnackbar("Event added successfully!", { variant: "success" });
+    }, 2000); // Simulate a 2-second loading time
 };
 
   return (

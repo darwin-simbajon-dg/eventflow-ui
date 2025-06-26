@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../pages/Sidebar';
 import Navbar from '../pages/Navbar';
-import { eventBus } from '../service/eventBus';
 import { useEventSubscriber } from '../service/useEventSubscriber';
 import Configurator from '../pages/Configurator';
 import ProfileCard from './Profile';
