@@ -40,3 +40,44 @@
 .read-the-docs {
   color: #888;
 } */
+
+/* Argon Toast Global Style */
+.argon-toast {
+  background-color: #5e72e4; /* Argon primary */
+  color: #fff;
+  font-family: "Open Sans", sans-serif; /* Argon default font */
+  border-radius: 0.5rem;
+  padding: 1rem 1.5rem;
+  box-shadow: 0 0.75rem 1.5rem rgba(33, 37, 41, 0.1); /* Argon shadow */
+  border-left: 4px solid #fff;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+}
+
+.argon-toast-body {
+  margin: 0;
+  padding: 0;
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+
+.Toastify__toast--success {
+  background: #2dce89; /* Argon green */
+  color: white;
+}
+
+.Toastify__toast--error {
+  background: #fb6340; /* Argon orange */
+  color: white;
+}
+
+.Toastify__toast--info {
+  background: #11cdef; /* Argon blue */
+  color: white;
+}
+
+.Toastify__progress-bar {
+  background: white;
+}

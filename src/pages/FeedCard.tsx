@@ -1,9 +1,12 @@
 import React from "react";
+import { enqueueSnackbar } from "notistack";
 
 const FeedCard: React.FC = () => {
   const handleAddEvent = () => {
-    alert("Add New Event button clicked!");
-  };
+    enqueueSnackbar("Add Event button clicked!", {
+      variant: "info"
+    });
+};
 
   return (
     <div className="feed-list container-fluid px-3">
@@ -29,7 +32,7 @@ const FeedCard: React.FC = () => {
               <small className="d-block text-muted">3 days ago</small>
             </div>
             <div>
-              <button type="button" className="btn btn-sm btn-primary">
+              <button type="button" className="btn btn-sm btn-primary" onClick={() => enqueueSnackbar("Register button clicked!", { variant: "success" })}>
                 <i className="fas fa-plus pe-2"></i> Register
               </button>
             </div>
