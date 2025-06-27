@@ -14,13 +14,17 @@ const Navbar: React.FC = () => {
               href="#"
               className="nav-link text-white font-weight-bold d-flex align-items-center"
               onClick={() => {
-                eventBus.emit("updateUI", {
+                eventBus.emit({
                   showLogin: true,
                   userAuthenticated: false,
                   showProfile: false,
                   showEvents: false,
                   data: { user: "Darwin" },
                 });
+
+                localStorage.removeItem("event-payload");
+                location.reload();
+
               }}
             >
               <i className="fa fa-user me-1"></i>

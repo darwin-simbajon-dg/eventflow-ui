@@ -1,9 +1,15 @@
 import React from "react";
+import '@fortawesome/fontawesome-free/css/all.css';
 import { enqueueSnackbar } from "notistack";
 import { useLoading } from "../service/LoadingContextType";
+import { useEventSubscriber } from "../service/useEventSubscriber";
 
-const FeedCard: React.FC = () => {
+
+const EventsList: React.FC = () => {
   const { setLoading } = useLoading();
+  const event = useEventSubscriber();
+  const events = event.events || []; // Default to an empty array if events are not available
+
   const handleAddEvent = () => {
     enqueueSnackbar("Add Event button clicked!", {
       variant: "info"
@@ -21,29 +27,46 @@ const FeedCard: React.FC = () => {
     <div className="feed-list container-fluid px-3">
       {/* Admin Add Event Button */}
       <div className="d-flex justify-content-end mb-3">
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={handleAddEvent}
-        >
-          <i className="fas fa-plus pe-2"></i> Add New Event
-        </button>
+        {event.isAdmin && (
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={handleAddEvent}
+          >
+            <i className="fas fa-plus pe-2"></i> Add New Event
+          </button>
+        )}
       </div>
 
-      {Array.from({ length: 5 }).map((_, index) => (
+      {events.map((ev, index) => (
         <div key={index} className="card h-100 mb-4 shadow-sm">
-          {/* Card Header */}
           <div className="card-header d-flex flex-wrap align-items-center justify-content-between gap-2 py-3">
             <div>
               <a href="#" className="text-dark fw-bold text-sm">
-                Event Title {index + 1}
+              {ev.title || "Event Name"}
               </a>
-              <small className="d-block text-muted">3 days ago</small>
+              <small className="d-block text-muted">{ev.createdDate}</small>
             </div>
             <div>
-              <button type="button" className="btn btn-sm btn-primary" onClick={() => enqueueSnackbar("Register button clicked!", { variant: "success" })}>
+            {event.isStudent && (<button type="button" className="btn btn-sm btn-primary" onClick={() => enqueueSnackbar("Register button clicked!", { variant: "success" })}>
                 <i className="fas fa-plus pe-2"></i> Register
               </button>
+            )}
+            {event.isAdmin && (<button
+                type="button"
+                className="btn btn-sm btn-danger ms-2"
+                onClick={() => enqueueSnackbar("Delete button clicked!", { variant: "error" })}
+              >
+                <i className="fas fa-trash pe-2"></i> Delete
+              </button>
+            )}
+             {event.isAdmin && ( <button
+                type="button"
+                className="btn btn-sm btn-warning ms-2"
+                onClick={() => enqueueSnackbar("Edit button clicked!", { variant: "info" })}
+              >
+                <i className="fas fa-edit pe-2"></i> Edit
+              </button>)}
             </div>
           </div>
 
@@ -53,7 +76,7 @@ const FeedCard: React.FC = () => {
               {/* Image */}
               <div className="col-12 col-md-4">
                 <img
-                  src="https://raw.githubusercontent.com/creativetimofficial/public-assets/master/argon-dashboard-pro/assets/img/activity-feed.jpg"
+                  src={ev.imageUrl || "https://via.placeholder.com/300"}                   
                   alt="activity"
                   className="img-fluid border-radius-lg shadow-sm w-100"
                   style={{ maxHeight: "200px", objectFit: "cover" }}
@@ -62,8 +85,7 @@ const FeedCard: React.FC = () => {
               {/* Text */}
               <div className="col-12 col-md-8">
                 <p className="mb-0">
-                  Personal profiles are the perfect way for you to grab
-                  attention and persuade readers why they should work with you.
+                  {ev.description} 
                 </p>
               </div>
             </div>
@@ -74,4 +96,4 @@ const FeedCard: React.FC = () => {
   );
 };
 
-export default FeedCard;
+export default EventsList;

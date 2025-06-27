@@ -3,7 +3,6 @@ import React from 'react';
 import { eventBus } from '../service/eventBus';
 import schoolLogo from '../assets/school-logo.png';
 
-
 const AuthLayout: React.FC = () => {
   return (
     <main className="main-content main-content-bg mt-0">
@@ -33,28 +32,11 @@ const AuthLayout: React.FC = () => {
                       }}
                     />
 
-                    <h5 className="text-dark mt-2 mb-3">Sign in</h5>
-
-                    {/* Optional buttons (commented out) */}
-                    {/* 
-  <div className="btn-wrapper text-center">
-    <button className="btn btn-neutral btn-icon btn-sm mb-0">
-      <img className="w-30" src="/assets/img/logos/github.svg" alt="github" />
-      Github
-    </button>
-    <button className="btn btn-neutral btn-icon btn-sm mb-0">
-      <img className="w-30" src="/assets/img/logos/google.svg" alt="google" />
-      Google
-    </button>
-  </div>
-  */}
+                    <h5 className="text-dark mt-2 mb-3">Sign in</h5>            
                   </div>
 
                 </div>
                 <div className="card-body px-lg-5 pt-0">
-                  {/* <div className="text-center text-muted mb-4">
-                    <small>Or sign in with credentials</small>
-                  </div> */}
                   <form role="form" className="text-start">
                     <div className="mb-3">
                       <input
@@ -84,9 +66,10 @@ const AuthLayout: React.FC = () => {
                     </div>
                     <div className="text-center">
                       <button type="button" className="btn btn-primary w-100 my-4 mb-2" onClick={() => {
-                        eventBus.emit('updateUI', {
+                        eventBus.emit({
                           showLogin: false,
                           userAuthenticated: true,
+                          showEvents: true,
                           data: { user: 'Darwin' },
                         });
                       }}>

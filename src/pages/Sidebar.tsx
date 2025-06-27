@@ -1,5 +1,6 @@
 import React from "react";
 import { eventBus } from "../service/eventBus";
+import { fetchEvents } from "../service/api";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -9,6 +10,46 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, isDesktop, toggleSidebar }) => {
   const shouldShowSidebar = isDesktop || isOpen;
+
+  const showEvents = async () => {
+    // try {
+    //   // Optional: show loading preloader
+    //   eventBus.emit("updateUI", {
+    //     loading: true,
+    //     showEvents: false, // hide events during loading (optional)
+    //   });
+  
+    //   const fetchedEvents = await fetchEvents();
+  
+    //   const mappedEvents = fetchedEvents.map((event: any, index: number) => ({
+    //     id: event.id ?? index.toString(),
+    //     title: event.title,
+    //     description: event.description,
+    //     createdDate: event.createdDate,
+    //     imageUrl: event.imageUrl ?? "https://dummyimage.com/1280x720/fff/aaa",
+    //   }));
+  
+      // ✅ Emit full state only after data is ready
+      eventBus.emit({
+        loading: false,
+        showLogin: false,
+        userAuthenticated: true,
+        showProfile: false,
+        showEvents: true, // <- move this here so EventsList gets shown *after* events are loaded
+        isAdmin: true,
+        isStudent: false,
+        // events: mappedEvents,
+        data: { user: "Darwin" },
+      });
+    // } catch (error) {
+    //   console.error("Failed to fetch events:", error);
+    //   // eventBus.emit("updateUI", { loading: false });
+    // }
+  };
+
+
+  
+  
 
   return (
     <>
@@ -90,14 +131,13 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isDesktop, toggleSidebar }) =
                     className="nav-link"
                     href="#"
                     onClick={() =>
-                      eventBus.emit("updateUI", {
+                      eventBus.emit({
                         showLogin: false,
                         userAuthenticated: true,
                         showProfile: true,
                         showEvents: false,
                         data: { user: "Darwin" },
-                      })
-                    }
+                      }) }
                   >
                     <span className="sidenav-mini-icon">S</span>
                     <span className="sidenav-normal">Profile</span>
@@ -107,16 +147,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isDesktop, toggleSidebar }) =
                   <a
                     className="nav-link"
                     href="#"
-                    onClick={() =>
-                      eventBus.emit("updateUI", {
-                        showLogin: false,
-                        userAuthenticated: true,
-                        showProfile: false,
-                        showEvents: true,
-                        data: { user: "Darwin" },
-                      })
-                    }
-                  >
+                    onClick={showEvents}
+                    >
                     <span className="sidenav-mini-icon">B</span>
                     <span className="sidenav-normal">Events</span>
                     
