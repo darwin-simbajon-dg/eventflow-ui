@@ -2,13 +2,15 @@ import React from "react";
 import '@fortawesome/fontawesome-free/css/all.css';
 import { enqueueSnackbar } from "notistack";
 import { useLoading } from "../service/LoadingContextType";
-import { useEventSubscriber } from "../service/useEventSubscriber";
-
+import { useAppStore } from "../store/useAppStore";
 
 const EventsList: React.FC = () => {
-  const { setLoading } = useLoading();
-  const event = useEventSubscriber();
-  const events = event.events || []; // Default to an empty array if events are not available
+ const { setLoading } = useLoading();
+ const events = useAppStore((state) => state.events);
+ const isAdmin = useAppStore((state) => state.isAdmin);
+ const isStudent = useAppStore((state) => state.isStudent);
+
+  // const events = event.events || []; // Default to an empty array if events are not available
 
   const handleAddEvent = () => {
     enqueueSnackbar("Add Event button clicked!", {
@@ -27,7 +29,7 @@ const EventsList: React.FC = () => {
     <div className="feed-list container-fluid px-3">
       {/* Admin Add Event Button */}
       <div className="d-flex justify-content-end mb-3">
-        {event.isAdmin && (
+        {isAdmin && (
           <button
             type="button"
             className="btn btn-primary"
@@ -45,14 +47,24 @@ const EventsList: React.FC = () => {
               <a href="#" className="text-dark fw-bold text-sm">
               {ev.title || "Event Name"}
               </a>
-              <small className="d-block text-muted">{ev.createdDate}</small>
+              <small className="d-block text-muted">{ev.timeline}</small>
             </div>
             <div>
-            {event.isStudent && (<button type="button" className="btn btn-sm btn-primary" onClick={() => enqueueSnackbar("Register button clicked!", { variant: "success" })}>
+            {isStudent && !ev.isRegistered && (<button type="button" className="btn btn-sm btn-primary" onClick={() => enqueueSnackbar("Register button clicked!", { variant: "success" })}>
                 <i className="fas fa-plus pe-2"></i> Register
               </button>
             )}
-            {event.isAdmin && (<button
+            {isStudent && ev.attended && (
+              <span className="badge bg-info ms-2">
+                <i className="fas fa-clipboard-user me-1"></i> Attended
+              </span>
+            )}
+            {isStudent && ev.isRegistered && !ev.attended && (
+              <span className="badge bg-success ms-2">
+              <i className="fas fa-check-circle me-1"></i> Registered
+              </span>
+            )}
+            {isAdmin && (<button
                 type="button"
                 className="btn btn-sm btn-danger ms-2"
                 onClick={() => enqueueSnackbar("Delete button clicked!", { variant: "error" })}
@@ -60,7 +72,7 @@ const EventsList: React.FC = () => {
                 <i className="fas fa-trash pe-2"></i> Delete
               </button>
             )}
-             {event.isAdmin && ( <button
+             {isAdmin && ( <button
                 type="button"
                 className="btn btn-sm btn-warning ms-2"
                 onClick={() => enqueueSnackbar("Edit button clicked!", { variant: "info" })}

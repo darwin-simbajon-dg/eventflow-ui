@@ -1,9 +1,47 @@
 // src/pages/AuthLayout.tsx
-import React from 'react';
-import { eventBus } from '../service/eventBus';
+import React, { useState } from 'react';
 import schoolLogo from '../assets/school-logo.png';
+import { useAppStore } from '../store/useAppStore';
+import { enqueueSnackbar } from "notistack";
 
 const AuthLayout: React.FC = () => {
+  const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
+
+  const login = () => {
+
+    if(userName === "admin" || password === "admin") {
+      useAppStore.getState().setState({ 
+        // eventBus.emit({
+          showLogin: false,
+          userAuthenticated: true,
+          isAdmin: true,
+          isStudent: false,
+          showEvents: true,
+          data: { user: 'Darwin' }, });
+
+          return;
+      }
+
+      if(userName === "student" || password === "student") {
+        useAppStore.getState().setState({ 
+          // eventBus.emit({
+            showLogin: false,
+            userAuthenticated: true,
+            isAdmin: false,
+            isStudent: true,
+            showEvents: true,
+            data: { user: 'Darwin' }, });
+            return;
+      }
+
+      enqueueSnackbar("Login failed. Please check your credentials.", {
+        variant: "error" });
+        setUserName("");
+        setPassword("");
+    }
+
+    
   return (
     <main className="main-content main-content-bg mt-0">
       <div
@@ -44,6 +82,8 @@ const AuthLayout: React.FC = () => {
                         className="form-control"
                         placeholder="Email"
                         aria-label="Email"
+                        onChange={(e) => setUserName(e.target.value)}
+                        value={userName}
                       />
                     </div>
                     <div className="mb-3">
@@ -52,6 +92,8 @@ const AuthLayout: React.FC = () => {
                         className="form-control"
                         placeholder="Password"
                         aria-label="Password"
+                        onChange={(e) => setPassword(e.target.value)}
+                        value={password}
                       />
                     </div>
                     <div className="form-check form-switch">
@@ -65,14 +107,7 @@ const AuthLayout: React.FC = () => {
                       </label>
                     </div>
                     <div className="text-center">
-                      <button type="button" className="btn btn-primary w-100 my-4 mb-2" onClick={() => {
-                        eventBus.emit({
-                          showLogin: false,
-                          userAuthenticated: true,
-                          showEvents: true,
-                          data: { user: 'Darwin' },
-                        });
-                      }}>
+                      <button type="button" className="btn btn-primary w-100 my-4 mb-2" onClick={login}>
                         Log in
                       </button>
                     </div>

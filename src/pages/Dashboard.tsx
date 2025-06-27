@@ -1,26 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import Sidebar from '../pages/Sidebar';
 import Navbar from '../pages/Navbar';
-import { useEventSubscriber } from '../service/useEventSubscriber';
 import Configurator from '../pages/Configurator';
 import ProfileCard from './Profile';
 import EventsList from './EventsList';
-import { eventBus, type EventPayload } from '../service/eventBus';
 import { fetchEvents } from '../service/api';
 import { useLoading } from "../service/LoadingContextType";
 import { useSignalR } from '../service/useSignalR';
 import { enqueueSnackbar } from "notistack";
-
+import { useAppStore } from '../store/useAppStore';
 
 const DashboardPage: React.FC = () => {
-  const event = useEventSubscriber();
+  const loading = useAppStore((state) => state.loading);
+  const showEvents = useAppStore((state) => state.showEvents);
+  const showProfile = useAppStore((state) => state.showProfile);
+
   const { setLoading } = useLoading();
   
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1200);
 
   useSignalR("http://localhost:5064/hub/notifications", (message) => {
-    enqueueSnackbar("Events is updated", {
+    enqueueSnackbar("Events are updated", {
           variant: "info"
         });
 
@@ -29,15 +30,14 @@ const DashboardPage: React.FC = () => {
     console.log("Received data from SignalR:", data);
 
     const mappedEvents = data.map((event: any, index: number) => ({
-      id: event.id ?? index.toString(),
-      title: event.title,
-      description: event.description,
-      createdDate: event.createdDate, // custom formatter, or just event.createdAt
-      imageUrl: event.imageUrl ?? "https://dummyimage.com/1280x720/fff/aaa",
+      id: event.EventId ?? index.toString(),
+      title: event.Title,
+      description: event.Description,
+      createdDate: event.DateCreated, // custom formatter, or just event.createdAt
+      imageUrl: event.ImageUrl ?? "https://dummyimage.com/1280x720/fff/aaa",
     }));
 
-    eventBus.emit({ events: [...mappedEvents] }); // As
-
+    useAppStore.getState().setState({ events: mappedEvents });
   });
 
   useEffect(() => {
@@ -50,17 +50,10 @@ const DashboardPage: React.FC = () => {
   useEffect(() => {
     const loadEvents = async () => {
       try {
-        const fetchedEvents = await fetchEvents();
 
-        const mappedEvents = fetchedEvents.map((event: any, index: number) => ({
-          id: event.id ?? index.toString(),
-          title: event.title,
-          description: event.description,
-          createdDate: event.createdDate, // custom formatter, or just event.createdAt
-          imageUrl: event.imageUrl ?? "https://dummyimage.com/1280x720/fff/aaa",
-        }));
+        await fetchEvents('14F12131-C9E4-4DB1-B868-731EA432BBB7');
+        //await fetchEvents('C6C4831F-323C-4FB8-8F1B-C15391132C25');
 
-        eventBus.emit({ events: mappedEvents }); // Assuming isAdmin is true for this example});
       } catch (error) {
         console.error("Failed to fetch events:", error);
       }
@@ -71,10 +64,10 @@ const DashboardPage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (event.loading !== undefined) {
-      setLoading(event.loading);
+    if (loading !== undefined) {
+      setLoading(loading);
     }
-  }, [event.loading]);
+  }, [loading]);
 
   const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
@@ -94,8 +87,8 @@ const DashboardPage: React.FC = () => {
         <div className="container-fluid py-4">
           <div className="row">
             <div className="col-lg-12">
-              {event.showProfile && <ProfileCard />}
-              {event.showEvents && <EventsList />}
+              {showProfile && <ProfileCard />}
+              {showEvents && <EventsList />}
             </div>
           </div>
         </div>
