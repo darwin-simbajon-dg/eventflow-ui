@@ -1,17 +1,6 @@
-// import { EventEmitter } from 'events';
+import merge from 'lodash.merge';
 
-// const eventBus = new EventEmitter();
-// eventBus.setMaxListeners(20);
-
-// export type EventPayload = {
-//   showLogin?: boolean;
-//   showHeader?: boolean;
-//   showTabs?: boolean;
-//   userAuthenticated?: boolean;
-//   data?: any;
-// };
-
-// export { eventBus}
+const STORAGE_KEY = "event-payload";
 
 // src/eventBus.ts
 export type EventPayload = {
@@ -21,39 +10,79 @@ export type EventPayload = {
     showProfile?: boolean;
     showEvents?: boolean;
     userAuthenticated?: boolean;
+    isAdmin?: boolean;
+    isStudent?: boolean;
+    loading?: boolean;
+    events?: Array<{
+      id: string;
+      title: string;
+      createdDate: string;
+      description?: string;
+      imageUrl?: string;
+    }>;
     data?: any;
   };
   
-  export const initialEventPayload: EventPayload = {
+  const defaultState: EventPayload = {
     showLogin: true,
     showHeader: false,
     showTabs: false,
     showProfile: false,
-    showEvents: true,
+    showEvents: false,
+    loading: false,
+    isAdmin: false,
+    isStudent: false,
     userAuthenticated: false,
+    events: [],
     data: null,
   };
-  
-  type EventCallback = (payload: EventPayload) => void;
+
+  const initialState: EventPayload = merge({}, defaultState, loadFromStorage());
+
+// ✅ Load saved state from localStorage
+function loadFromStorage(): EventPayload {
+  const stored = localStorage.getItem(STORAGE_KEY);
+  if (!stored) return {};
+  try {
+    return JSON.parse(stored);
+  } catch {
+    return {};
+  }
+}
+
+function saveToStorage(payload: EventPayload) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+}
+
+  type Listener = (state: EventPayload) => void;
   
   class EventBus {
-    private listeners: Record<string, Set<EventCallback>> = {};
-  
-    on(eventName: string, callback: EventCallback) {
-      if (!this.listeners[eventName]) {
-        this.listeners[eventName] = new Set();
-      }
-      this.listeners[eventName].add(callback);
+    private state: EventPayload = initialState;
+    private listeners = new Set<Listener>();
+
+    getState(): EventPayload {
+      return this.state;
     }
-  
-    off(eventName: string, callback: EventCallback) {
-      this.listeners[eventName]?.delete(callback);
+
+    emit(update: Partial<EventPayload>) {
+      this.state = merge({}, this.state, update);
+      saveToStorage(this.state);
+      this.listeners.forEach((listener) => listener(this.state));
     }
-  
-    emit(eventName: string, payload: EventPayload) {
-      this.listeners[eventName]?.forEach((callback) => callback(payload));
+
+    subscribe(callback: Listener) {
+      this.listeners.add(callback);
+      // Return an unsubscribe function
+      callback(this.state)
+      return () => {
+        this.listeners.delete(callback);
+      };
     }
   }
-  
+
   export const eventBus = new EventBus();
+  export const initialEventPayload = initialState;
+
+
+  
   

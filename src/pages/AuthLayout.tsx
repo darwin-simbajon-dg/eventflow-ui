@@ -1,10 +1,47 @@
 // src/pages/AuthLayout.tsx
-import React from 'react';
-import { eventBus } from '../service/eventBus';
+import React, { useState } from 'react';
 import schoolLogo from '../assets/school-logo.png';
-
+import { useAppStore } from '../store/useAppStore';
+import { enqueueSnackbar } from "notistack";
 
 const AuthLayout: React.FC = () => {
+  const [userName, setUserName] = useState("");
+  const [password, setPassword] = useState("");
+
+  const login = () => {
+
+    if(userName === "admin" || password === "admin") {
+      useAppStore.getState().setState({ 
+        // eventBus.emit({
+          showLogin: false,
+          userAuthenticated: true,
+          isAdmin: true,
+          isStudent: false,
+          showEvents: true,
+          data: { user: 'Darwin' }, });
+
+          return;
+      }
+
+      if(userName === "student" || password === "student") {
+        useAppStore.getState().setState({ 
+          // eventBus.emit({
+            showLogin: false,
+            userAuthenticated: true,
+            isAdmin: false,
+            isStudent: true,
+            showEvents: true,
+            data: { user: 'Darwin' }, });
+            return;
+      }
+
+      enqueueSnackbar("Login failed. Please check your credentials.", {
+        variant: "error" });
+        setUserName("");
+        setPassword("");
+    }
+
+    
   return (
     <main className="main-content main-content-bg mt-0">
       <div
@@ -33,28 +70,11 @@ const AuthLayout: React.FC = () => {
                       }}
                     />
 
-                    <h5 className="text-dark mt-2 mb-3">Sign in</h5>
-
-                    {/* Optional buttons (commented out) */}
-                    {/* 
-  <div className="btn-wrapper text-center">
-    <button className="btn btn-neutral btn-icon btn-sm mb-0">
-      <img className="w-30" src="/assets/img/logos/github.svg" alt="github" />
-      Github
-    </button>
-    <button className="btn btn-neutral btn-icon btn-sm mb-0">
-      <img className="w-30" src="/assets/img/logos/google.svg" alt="google" />
-      Google
-    </button>
-  </div>
-  */}
+                    <h5 className="text-dark mt-2 mb-3">Sign in</h5>            
                   </div>
 
                 </div>
                 <div className="card-body px-lg-5 pt-0">
-                  {/* <div className="text-center text-muted mb-4">
-                    <small>Or sign in with credentials</small>
-                  </div> */}
                   <form role="form" className="text-start">
                     <div className="mb-3">
                       <input
@@ -62,6 +82,8 @@ const AuthLayout: React.FC = () => {
                         className="form-control"
                         placeholder="Email"
                         aria-label="Email"
+                        onChange={(e) => setUserName(e.target.value)}
+                        value={userName}
                       />
                     </div>
                     <div className="mb-3">
@@ -70,6 +92,8 @@ const AuthLayout: React.FC = () => {
                         className="form-control"
                         placeholder="Password"
                         aria-label="Password"
+                        onChange={(e) => setPassword(e.target.value)}
+                        value={password}
                       />
                     </div>
                     <div className="form-check form-switch">
@@ -83,13 +107,7 @@ const AuthLayout: React.FC = () => {
                       </label>
                     </div>
                     <div className="text-center">
-                      <button type="button" className="btn btn-primary w-100 my-4 mb-2" onClick={() => {
-                        eventBus.emit('updateUI', {
-                          showLogin: false,
-                          userAuthenticated: true,
-                          data: { user: 'Darwin' },
-                        });
-                      }}>
+                      <button type="button" className="btn btn-primary w-100 my-4 mb-2" onClick={login}>
                         Log in
                       </button>
                     </div>

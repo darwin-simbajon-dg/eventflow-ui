@@ -1,20 +1,15 @@
-import { useEffect, useState } from 'react';
-import { eventBus, initialEventPayload } from './eventBus'; // ✅ Import initial values from eventBus
-import type { EventPayload } from './eventBus';
+// import { useEffect, useState } from 'react';
+// import { eventBus, initialEventPayload } from './eventBus'; // ✅ Import initial values from eventBus
+// import type { EventPayload } from './eventBus';
 
-export function useEventSubscriber() {
-  const [event, setEvent] = useState<EventPayload>(initialEventPayload); // ✅ use initial values
+// export function useEventSubscriber() : EventPayload {
+//   const [event, setEvent] = useState<EventPayload>(eventBus.getState() || initialEventPayload); // Initialize with current state or initial values
 
-  useEffect(() => {
-    const handler = (payload: EventPayload) => {
-      setEvent((prev) => ({ ...prev, ...payload }));
-    };
+//   useEffect(() => {
+//    const unsubscribe = eventBus.subscribe(setEvent);
+//    return () => unsubscribe();
+//   }, []);
 
-    eventBus.on('updateUI', handler);
-    return () => {
-      eventBus.off('updateUI', handler);
-    };
-  }, []);
+//   return event;
+// }
 
-  return event;
-}

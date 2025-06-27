@@ -4,15 +4,21 @@ import 'react-toastify/dist/ReactToastify.css';
 import AuthLayout from './pages/AuthLayout';
 import Dashboard from './pages/Dashboard';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-import { useEventSubscriber } from './service/useEventSubscriber';
+// import { useEventSubscriber } from './service/useEventSubscriber';
 import { SnackbarProvider } from 'notistack'
 import { MaterialDesignContent } from 'notistack'
 import { styled } from '@mui/material/styles';
 import { LoadingProvider } from './service/LoadingContextType';
 import GlobalSpinner from './components/Spinner';
+import { useAppStore } from './store/useAppStore';
 
 function App() {
-  const event = useEventSubscriber();
+  // const event = useEventSubscriber();
+
+  const {
+    showLogin, 
+    userAuthenticated
+  } = useAppStore();
 
   const StyledMaterialDesignContent = styled(MaterialDesignContent)(() => ({
     '&.notistack-MuiContent-success': {
@@ -43,8 +49,8 @@ function App() {
       }}
        />
     <div className="app-container">
-      {event.showLogin && <AuthLayout />}
-      {event.userAuthenticated && <Dashboard />}
+      {showLogin && <AuthLayout />}
+      {userAuthenticated && <Dashboard />}
     </div>
     </LoadingProvider>
     </>

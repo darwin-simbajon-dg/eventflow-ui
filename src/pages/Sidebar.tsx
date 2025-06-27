@@ -1,5 +1,7 @@
 import React from "react";
-import { eventBus } from "../service/eventBus";
+// import { eventBus } from "../service/eventBus";
+// import { fetchEvents } from "../service/api";
+import { useAppStore } from "../store/useAppStore";
 
 interface SidebarProps {
   isOpen: boolean;
@@ -9,6 +11,21 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, isDesktop, toggleSidebar }) => {
   const shouldShowSidebar = isDesktop || isOpen;
+
+  const showEvents = async () => { 
+    useAppStore.getState().setState({
+      showProfile: false,
+      showEvents: true, 
+    });
+  };
+
+  const showProfile = async () => { 
+    useAppStore.getState().setState({
+      showProfile: true,
+      showEvents: false, 
+    });
+};
+
 
   return (
     <>
@@ -89,15 +106,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isDesktop, toggleSidebar }) =
                   <a
                     className="nav-link"
                     href="#"
-                    onClick={() =>
-                      eventBus.emit("updateUI", {
-                        showLogin: false,
-                        userAuthenticated: true,
-                        showProfile: true,
-                        showEvents: false,
-                        data: { user: "Darwin" },
-                      })
-                    }
+                    onClick={showProfile}
                   >
                     <span className="sidenav-mini-icon">S</span>
                     <span className="sidenav-normal">Profile</span>
@@ -107,16 +116,8 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isDesktop, toggleSidebar }) =
                   <a
                     className="nav-link"
                     href="#"
-                    onClick={() =>
-                      eventBus.emit("updateUI", {
-                        showLogin: false,
-                        userAuthenticated: true,
-                        showProfile: false,
-                        showEvents: true,
-                        data: { user: "Darwin" },
-                      })
-                    }
-                  >
+                    onClick={showEvents}
+                    >
                     <span className="sidenav-mini-icon">B</span>
                     <span className="sidenav-normal">Events</span>
                     
