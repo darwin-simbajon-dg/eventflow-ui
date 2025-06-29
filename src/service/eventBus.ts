@@ -1,4 +1,5 @@
 import merge from 'lodash.merge';
+import type { UserData } from '../types/UserData';
 
 const STORAGE_KEY = "event-payload";
 
@@ -13,6 +14,7 @@ export type EventPayload = {
     isAdmin?: boolean;
     isStudent?: boolean;
     loading?: boolean;
+    userData: UserData;
     events?: Array<{
       id: string;
       title: string;
@@ -32,6 +34,12 @@ export type EventPayload = {
     loading: false,
     isAdmin: false,
     isStudent: false,
+    userData: {
+      username: '',
+      userId: '',
+      role: '',
+      studentNumber: '',
+    },
     userAuthenticated: false,
     events: [],
     data: null,
