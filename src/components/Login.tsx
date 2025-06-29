@@ -1,45 +1,37 @@
 // src/pages/AuthLayout.tsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import schoolLogo from '../assets/school-logo.png';
-import { useAppStore } from '../store/useAppStore';
+import { login } from '../service/api' // Assuming you have a service for authentication
+// import { useAppStore } from '../store/useAppStore';
 import { enqueueSnackbar } from "notistack";
+import { useAppStore } from '../store/useAppStore';
 
-const AuthLayout: React.FC = () => {
+const Login: React.FC = () => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
+  const userAuthenticated = useAppStore((state) => state.userAuthenticated);
+  
+  const loginUser = async () => {
 
-  const login = () => {
+    await login(userName, password);
 
-    if(userName === "admin" || password === "admin") {
-      useAppStore.getState().setState({ 
-        // eventBus.emit({
-          showLogin: false,
-          userAuthenticated: true,
-          isAdmin: true,
-          isStudent: false,
-          showEvents: true,
-          data: { user: 'Darwin' }, });
+    if (!userAuthenticated) {
 
-          return;
-      }
 
-      if(userName === "student" || password === "student") {
-        useAppStore.getState().setState({ 
-          // eventBus.emit({
-            showLogin: false,
-            userAuthenticated: true,
-            isAdmin: false,
-            isStudent: true,
-            showEvents: true,
-            data: { user: 'Darwin' }, });
-            return;
-      }
-
-      enqueueSnackbar("Login failed. Please check your credentials.", {
-        variant: "error" });
-        setUserName("");
-        setPassword("");
+      setUserName("");
+      setPassword("");
     }
+
+}
+
+useEffect(() => {
+  if (!userAuthenticated) {
+
+    setUserName("");
+    setPassword("");
+  }
+
+}, [userAuthenticated]);
 
     
   return (
@@ -107,7 +99,7 @@ const AuthLayout: React.FC = () => {
                       </label>
                     </div>
                     <div className="text-center">
-                      <button type="button" className="btn btn-primary w-100 my-4 mb-2" onClick={login}>
+                      <button type="button" className="btn btn-primary w-100 my-4 mb-2" onClick={loginUser}>
                         Log in
                       </button>
                     </div>
@@ -135,4 +127,4 @@ const AuthLayout: React.FC = () => {
   );
 };
 
-export default AuthLayout;
+export default Login;

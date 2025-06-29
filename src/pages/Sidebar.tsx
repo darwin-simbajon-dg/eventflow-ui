@@ -11,11 +11,13 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, isDesktop, toggleSidebar }) => {
   const shouldShowSidebar = isDesktop || isOpen;
-
+  const isAdmin = useAppStore((state) => state.isAdmin);
   const showEvents = async () => { 
     useAppStore.getState().setState({
       showProfile: false,
       showEvents: true, 
+      showEventForm: false,
+      showScanner: false
     });
   };
 
@@ -23,8 +25,19 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isDesktop, toggleSidebar }) =
     useAppStore.getState().setState({
       showProfile: true,
       showEvents: false, 
+      showEventForm: false,
+      showScanner: false
     });
-};
+  };
+
+  const showScanner = async () => { 
+    useAppStore.getState().setState({
+      showProfile: false,
+      showEvents: false, 
+      showEventForm: false,
+      showScanner: true
+    });
+  };
 
 
   return (
@@ -123,6 +136,19 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isDesktop, toggleSidebar }) =
                     
                   </a>
                 </li>
+                {isAdmin && (
+                  <li className="nav-item">
+                  <a
+                    className="nav-link"
+                    href="#"
+                    onClick={showScanner}
+                    >
+                    <span className="sidenav-mini-icon">V</span>
+                    <span className="sidenav-normal">Scan Invitation</span>
+                    
+                  </a>
+                </li>
+                )}
               </ul>
             </div>
           </li>

@@ -4,41 +4,40 @@ import Navbar from '../pages/Navbar';
 import Configurator from '../pages/Configurator';
 import ProfileCard from './Profile';
 import EventsList from './EventsList';
+import EventForm from '../components/EventForm';
 import { fetchEvents } from '../service/api';
 import { useLoading } from "../service/LoadingContextType";
 import { useSignalR } from '../service/useSignalR';
-import { enqueueSnackbar } from "notistack";
+// import { enqueueSnackbar } from "notistack";
 import { useAppStore } from '../store/useAppStore';
+import QRScanner from '../components/QRScanner';
 
 const DashboardPage: React.FC = () => {
   const loading = useAppStore((state) => state.loading);
   const showEvents = useAppStore((state) => state.showEvents);
   const showProfile = useAppStore((state) => state.showProfile);
+  const showEventForm = useAppStore((state) => state.showEventForm);
+  const showScanner = useAppStore((state) => state.showScanner);
+  const userData = useAppStore((state) => state.userData);
 
   const { setLoading } = useLoading();
   
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 1200);
+  const selectedEvent = useAppStore((state) => state.selectedEvent);
 
-  useSignalR("http://localhost:5064/hub/notifications", (message) => {
-    enqueueSnackbar("Events are updated", {
-          variant: "info"
-        });
+  const defaultEvent = {
+    eventId: '',
+    title: '',
+    description: '',
+    date: '',
+    venue: '',
+    time: '',
+    imageUrl: '',
+    link: '',
+  };
 
-    const data = JSON.parse(message);
-
-    console.log("Received data from SignalR:", data);
-
-    const mappedEvents = data.map((event: any, index: number) => ({
-      id: event.EventId ?? index.toString(),
-      title: event.Title,
-      description: event.Description,
-      createdDate: event.DateCreated, // custom formatter, or just event.createdAt
-      imageUrl: event.ImageUrl ?? "https://dummyimage.com/1280x720/fff/aaa",
-    }));
-
-    useAppStore.getState().setState({ events: mappedEvents });
-  });
+ 
 
   useEffect(() => {
     const handleResize = () => setIsDesktop(window.innerWidth >= 1200);
@@ -50,8 +49,11 @@ const DashboardPage: React.FC = () => {
   useEffect(() => {
     const loadEvents = async () => {
       try {
-
-        await fetchEvents('14F12131-C9E4-4DB1-B868-731EA432BBB7');
+        if (userData && userData.userId) {
+          await fetchEvents(userData.userId);
+        } else {
+          console.warn("User data or userId is null");
+        }
         //await fetchEvents('C6C4831F-323C-4FB8-8F1B-C15391132C25');
 
       } catch (error) {
@@ -89,8 +91,11 @@ const DashboardPage: React.FC = () => {
             <div className="col-lg-12">
               {showProfile && <ProfileCard />}
               {showEvents && <EventsList />}
-            </div>
+              {showEventForm && <EventForm event={selectedEvent || defaultEvent} />}
+              {showScanner && 
+              <QRScanner />}
           </div>
+        </div>
         </div>
       </main>
 
