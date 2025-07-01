@@ -1,5 +1,4 @@
 import React from "react";
-import { eventBus } from "../service/eventBus";
 import { useAppStore } from "../store/useAppStore";
 
 const Navbar: React.FC = () => {

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import '@fortawesome/fontawesome-free/css/all.css';
 import { deleteEvent, register } from '../service/api';
 import { useAppStore } from '../store/useAppStore';

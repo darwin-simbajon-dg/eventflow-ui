@@ -4,15 +4,20 @@ import { useAppStore } from '../store/useAppStore';
 import  {tokenService}  from './tokenService';
 import { enqueueSnackbar } from 'notistack';
 
+const apiBaseUrl = useAppStore.getState().config?.apiBaseUrl;
+
 export const fetchEvents = async (userId: string) => {
+
+
 
     useAppStore.getState().setState({ loading: true });
 
-    const response = await axios.get(`http://localhost:5064/api/events/${userId}`);
+    
+    const response = await axios.get(`${apiBaseUrl}/api/events/${userId}`);
 
     useAppStore.getState().setState({ loading: false });
 
-    const mappedEvents = response.data.map((event: any, index: number) => {
+    const mappedEvents = response.data.map((event: any) => {
         const formatTime = (time: string) => {
             const [hours, minutes] = time.split(':').map(Number);
             const period = hours >= 12 ? 'PM' : 'AM';
@@ -44,7 +49,7 @@ export const fetchEvents = async (userId: string) => {
 export const createEvent = async (eventData: any) => {
     useAppStore.getState().setState({ loading: true });
     try {
-        const response = await axios.post('http://localhost:5064/api/event', eventData);
+        const response = await axios.post(`${apiBaseUrl}/api/event`, eventData);
 
         if (response.status === 200) {
             enqueueSnackbar("Event created successfully", { variant: "success" });
@@ -65,7 +70,7 @@ export const login = async (username: string, password: string) => {
 
     try {
 
-        const response = await axios.post('http://localhost:5064/api/auth/login', {
+        const response = await axios.post(`${apiBaseUrl}/api/auth/login`, {
             username,
             password
         });
@@ -74,7 +79,7 @@ export const login = async (username: string, password: string) => {
             // Save the token to localStorage
             const userData = response.data;
             localStorage.setItem("user-data", JSON.stringify(userData));
-            const data = tokenService.getUserDataFromToken(localStorage.getItem("user-data") || "");
+            const data = tokenService.getUserDataFromToken();
     
             if (!data) {
                 throw new Error("Invalid user data");
@@ -115,7 +120,7 @@ export const login = async (username: string, password: string) => {
 export const register = async (userId: string, eventId: string) => {
     useAppStore.getState().setState({ loading: true });
     try {  
-        const response = await axios.post('http://localhost:5064/api/event/register', {
+        const response = await axios.post(`${apiBaseUrl}/api/event/register`, {
             userId,
             eventId
         });
@@ -137,6 +142,33 @@ export const register = async (userId: string, eventId: string) => {
     }
 }
 
+export const signUp = async (formData: any) => {
+       try {
+
+        useAppStore.getState().setState({ loading: true });
+        
+        const response = await axios.post(`${apiBaseUrl}/api/auth/register`, formData)
+
+        if(response.status === 200){
+            console.log("Profile updated successfully:", response.data);
+            useAppStore.getState().setState({
+                showRegister: false,
+                showLogin: true,
+                userAuthenticated: false
+            })
+            enqueueSnackbar("Profile created successfully", {variant: "success"});
+        }
+
+       } catch(error){
+        enqueueSnackbar("Failed to create profile. Please try again.", { variant: "error" });
+        console.error("Failed to create profile:", error);
+        throw error;
+       }
+       finally {
+        useAppStore.getState().setState({ loading: false });
+       }
+};
+
 export const updateProfile = async (userId: string, formData: any, base64Image: string | null) => {
     try {
  
@@ -147,7 +179,7 @@ export const updateProfile = async (userId: string, formData: any, base64Image: 
         imageBase64: base64Image, // base64 string if changed, or null
       };
   
-      const response = await axios.put(`http://localhost:5064/api/profile/${userId}`, payload);
+      const response = await axios.put(`${apiBaseUrl}/api/profile/${userId}`, payload);
       
       if(response.status === 200) {
         // Update successful
@@ -171,7 +203,7 @@ export const updateProfile = async (userId: string, formData: any, base64Image: 
   };
 
 export const deleteEvent = async (eventId: string) => {
-    const response = await axios.delete(`http://localhost:5064/api/event/${eventId}`)
+    const response = await axios.delete(`${apiBaseUrl}/api/event/${eventId}`)
 
     if (response.status === 200) {
         enqueueSnackbar("Event deleted successfully", { variant: "success" });
@@ -184,7 +216,7 @@ export const deleteEvent = async (eventId: string) => {
 export const updateEvent = async (eventData: any) => {
     useAppStore.getState().setState({ loading: true });
     try {
-        const response = await axios.put(`http://localhost:5064/api/event`, eventData);
+        const response = await axios.put(`${apiBaseUrl}/api/event`, eventData);
 
         if (response.status === 200) {
             enqueueSnackbar("Event updated successfully", { variant: "success" });
@@ -205,7 +237,7 @@ export const handleQRCodeResult = async (qrData: string) => {
       const payload = JSON.parse(qrData); // or parse manually if it's not JSON
       const { eventId, userId } = payload;
   
-      const res = await axios.post("http://localhost:5064/api/event/confirm-attendance", {
+      const res = await axios.post(`${apiBaseUrl}/api/event/confirm-attendance`, {
         eventId,
         userId,
       });
@@ -220,4 +252,8 @@ export const handleQRCodeResult = async (qrData: string) => {
       console.error("QR processing error:", error);
     }
   };
+
+
+
+  
   

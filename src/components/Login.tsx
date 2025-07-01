@@ -1,9 +1,6 @@
-// src/pages/AuthLayout.tsx
 import React, { useEffect, useState } from 'react';
 import schoolLogo from '../assets/school-logo.png';
 import { login } from '../service/api' // Assuming you have a service for authentication
-// import { useAppStore } from '../store/useAppStore';
-import { enqueueSnackbar } from "notistack";
 import { useAppStore } from '../store/useAppStore';
 
 const Login: React.FC = () => {
@@ -22,7 +19,17 @@ const Login: React.FC = () => {
       setPassword("");
     }
 
-}
+  }
+
+  const handleSignUp = async () => {
+
+    useAppStore.getState().setState({
+      showRegister: true,
+      showLogin: false,
+      userAuthenticated: false
+    });
+
+  }
 
 useEffect(() => {
   if (!userAuthenticated) {
@@ -112,6 +119,7 @@ useEffect(() => {
                       <button
                         type="button"
                         className="btn bg-gradient-dark w-100 mt-2 mb-4"
+                        onClick={handleSignUp}
                       >
                         Sign up
                       </button>

@@ -14,13 +14,22 @@ import Modal from './components/Modal';
 import Login from './components/Login';
 import { useSignalR } from './service/useSignalR';
 import { fetchEvents } from './service/api';
+import Register from './components/Register';
 
 function App() {
   const userAuthenticated = useAppStore((state) => state.userAuthenticated);
   const showLogin = useAppStore((state) => state.showLogin);
   const userData = useAppStore((state) => state.userData);
+  const showRegister = useAppStore((state) => state.showRegister);
+  const signalRUrl = useAppStore.getState().config?.signalRUrl;
+
+  fetch('/config.json')
+  .then((res) => res.json())
+  .then((config) => {
+    useAppStore.getState().setConfig(config);
+  });
   
-   useSignalR("http://localhost:5064/hub/notifications", async (message) => {
+   useSignalR(`${signalRUrl}`, async (message) => {
   
       if(message === "EventListUpdated") {
         // If you want to show a notification when e
@@ -66,6 +75,15 @@ function App() {
     <div className="app-container">
       {showLogin && <Login />}
       {userAuthenticated && <Dashboard />}
+      {showRegister && <Register student={{
+        studentNumber: '',
+        firstname: '',
+        lastname: '',
+        college: '',
+        email: '',
+        alternativeEmail: '',
+        password: ''
+      }} />}
     </div>
     </LoadingProvider>
     </>

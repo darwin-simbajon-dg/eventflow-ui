@@ -10,6 +10,7 @@ type AppState = {
     showProfile: boolean;
     showEvents: boolean;
     showScanner: boolean;
+    showRegister: boolean;
     showEventForm?: boolean; // Optional property for edit event form
     userAuthenticated: boolean;
     isAdmin: boolean;
@@ -23,6 +24,11 @@ type AppState = {
     selectedEvent: any | null;
     showModal: boolean;
     modalOptions: ModalOptions | null;
+    config: {
+      apiBaseUrl: string;
+      signalRUrl: string;
+    } | null;
+    setConfig: (config: any) => void;
     openModal: (options: ModalOptions) => void;
     closeModal: () => void;
     setSelectedEvent: (event: any) => void;
@@ -39,6 +45,7 @@ type AppState = {
       showEvents: false,
       showEventForm: false, 
       showScanner: false,
+      showRegister: false,
       userAuthenticated: false,
       userData: null,
       isEdit: false,
@@ -51,6 +58,8 @@ type AppState = {
       selectedEvent: null,
       showModal: false,
       modalOptions: null,
+      config: null,
+      setConfig: (config) => set({ config }),
       setSelectedEvent: (event: any) => set({ selectedEvent: event }),
       setState: (newState) => set((state) => ({ ...state, ...newState })),     
       openModal: (options) => set({ showModal: true, modalOptions: options }),

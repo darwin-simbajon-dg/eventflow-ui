@@ -7,8 +7,6 @@ import EventsList from './EventsList';
 import EventForm from '../components/EventForm';
 import { fetchEvents } from '../service/api';
 import { useLoading } from "../service/LoadingContextType";
-import { useSignalR } from '../service/useSignalR';
-// import { enqueueSnackbar } from "notistack";
 import { useAppStore } from '../store/useAppStore';
 import QRScanner from '../components/QRScanner';
 

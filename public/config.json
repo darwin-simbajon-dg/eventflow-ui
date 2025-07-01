@@ -1,0 +1,6 @@
+{
+    "apiBaseUrl": "http://localhost:5000",
+    "signalRUrl": "http://localhost:5000/hub/notifications",
+    "featureToggle": true
+  }
+  
