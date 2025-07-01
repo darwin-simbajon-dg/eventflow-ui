@@ -242,7 +242,7 @@ export const handleQRCodeResult = async (qrData: string) => {
         userId,
       });
   
-      if (res.data.success) {
+      if (res.status === 200) {
         enqueueSnackbar("Attendance confirmed!", { variant: "success" });
       } else {
         enqueueSnackbar("Invalid or already confirmed.", { variant: "warning" });
