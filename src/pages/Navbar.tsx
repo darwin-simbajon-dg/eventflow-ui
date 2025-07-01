@@ -26,10 +26,14 @@ const Navbar: React.FC = () => {
                     userAuthenticated: false,
                     showProfile: false,
                     showEvents: false,
-                    data: { user: "Darwin" },
+                    data: { user: null},
+                    userData: null
                   });
                 
+                console.log("delete app-store");
                 localStorage.removeItem("app-store");
+
+                console.log("delete user-data");
                 localStorage.removeItem("user-data");
                 location.reload();
 
