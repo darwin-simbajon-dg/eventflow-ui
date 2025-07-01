@@ -10,7 +10,6 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ isOpen, isDesktop, toggleSidebar }) => {
-  const shouldShowSidebar = isDesktop || isOpen;
   const isAdmin = useAppStore((state) => state.isAdmin);
   const showEvents = async () => { 
     useAppStore.getState().setState({
