@@ -1,6 +1,6 @@
 {
-    "apiBaseUrl": "http://localhost:5000",
-    "signalRUrl": "http://localhost:5000/hub/notifications",
+    "apiBaseUrl": "https://eventflow-api-development.up.railway.app",
+    "signalRUrl": "https://eventflow-api-development.up.railway.app/hub/notifications",
     "featureToggle": true
   }
   
