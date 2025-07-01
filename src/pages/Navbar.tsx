@@ -29,7 +29,8 @@ const Navbar: React.FC = () => {
                     data: { user: "Darwin" },
                   });
                 
-                localStorage.removeItem("event-payload");
+                localStorage.removeItem("app-store");
+                localStorage.removeItem("user-data");
                 location.reload();
 
               }}
