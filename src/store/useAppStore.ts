@@ -67,6 +67,10 @@ type AppState = {
     }),
     {
       name: 'app-store', // Key in localStorage
+      partialize: (state) => 
+        Object.fromEntries(
+          Object.entries(state).filter(([key]) => key !== 'events')
+        ),
     }
   )
 

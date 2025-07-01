@@ -35,7 +35,13 @@ const DashboardPage: React.FC = () => {
     link: '',
   };
 
- 
+  useEffect(() => {
+    const storeData = localStorage.getItem('app-store');
+    if (storeData) {
+      const sizeInKB = new Blob([storeData]).size / 1024;
+      console.log(`📦 app-store size: ${sizeInKB.toFixed(2)} KB`);
+    }
+  }, []);
 
   useEffect(() => {
     const handleResize = () => setIsDesktop(window.innerWidth >= 1200);

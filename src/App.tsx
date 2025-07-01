@@ -15,6 +15,7 @@ import Login from './components/Login';
 import { useSignalR } from './service/useSignalR';
 import { fetchEvents } from './service/api';
 import Register from './components/Register';
+import { useEffect } from 'react';
 
 function App() {
   const userAuthenticated = useAppStore((state) => state.userAuthenticated);
@@ -55,7 +56,14 @@ function App() {
     }
   }));
 
-
+  useEffect(() => {
+    const storeData = localStorage.getItem('app-store');
+    if (storeData) {
+      const sizeInKB = new Blob([storeData]).size / 1024;
+      console.log(`📦 app-store size: ${sizeInKB.toFixed(2)} KB`);
+    }
+  }, []);
+  
   return (
     <>
     <LoadingProvider> 
