@@ -46,12 +46,8 @@ export const fetchEvents = async (userId: string) => {
 
 export const fetchEventWithoutPreload = async (userId: string) => {
 
-    useAppStore.getState().setState({ loading: true });
-
     // const apiBaseUrl = useAppStore.getState().config?.apiBaseUrl;
     const response = await axios.get(`${apiUrl}/api/events/${userId}`);
-
-    useAppStore.getState().setState({ loading: false });
 
     const mappedEvents = response.data.map((event: any) => {
         const formatTime = (time: string) => {
