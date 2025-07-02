@@ -16,6 +16,8 @@ import { useSignalR } from './service/useSignalR';
 import { fetchEventWithoutPreload } from './service/api';
 import Register from './components/Register';
 import { useEffect } from 'react';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 function App() {
   const userAuthenticated = useAppStore((state) => state.userAuthenticated);
