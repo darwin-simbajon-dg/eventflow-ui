@@ -3,6 +3,7 @@ import '@fortawesome/fontawesome-free/css/all.css';
 import { deleteEvent, register } from '../service/api';
 import { useAppStore } from '../store/useAppStore';
 import QRCode from 'react-qr-code';
+import Confetti from 'react-confetti';
 
 
 interface EventDetailsCardProps {
@@ -93,8 +94,14 @@ const userData = useAppStore((state) => state.userData);
   }
 
   return (
-    <main className="main-content">
+    <main className="main-content">    
       <div className="card mb-4 shadow-sm border-radius-lg overflow-hidden">
+      {attended && ( <Confetti
+          numberOfPieces={150}
+          recycle={true}
+          width={window.innerWidth}
+          height={window.innerHeight}
+        />)}
         <div className="position-relative">
           <img
             src={imageUrl || "https://dummyimage.com/1280x720/fff/aaa"}
@@ -122,7 +129,7 @@ const userData = useAppStore((state) => state.userData);
             <i className="fas fa-check-circle me-1"></i> Registered
               </span>
             )}
-             {isStudent && isRegistered && qrValue && (
+             {isStudent && isRegistered && qrValue && !attended && (
                 <div
                   className="position-absolute mt-2"
                   style={{

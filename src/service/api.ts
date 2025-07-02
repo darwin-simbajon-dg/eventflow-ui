@@ -4,16 +4,52 @@ import { useAppStore } from '../store/useAppStore';
 import  {tokenService}  from './tokenService';
 import { enqueueSnackbar } from 'notistack';
 
-const apiBaseUrl = useAppStore.getState().config?.apiBaseUrl;
+const apiUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const fetchEvents = async (userId: string) => {
 
+    useAppStore.getState().setState({ loading: true });
 
+    // const apiBaseUrl = useAppStore.getState().config?.apiBaseUrl;
+    const response = await axios.get(`${apiUrl}/api/events/${userId}`);
+
+    useAppStore.getState().setState({ loading: false });
+
+    const mappedEvents = response.data.map((event: any) => {
+        const formatTime = (time: string) => {
+            const [hours, minutes] = time.split(':').map(Number);
+            const period = hours >= 12 ? 'PM' : 'AM';
+            const formattedHours = hours % 12 || 12; // Convert 0 to 12 for AM/PM format
+            return `${formattedHours}:${minutes.toString().padStart(2, '0')} ${period}`;
+        };
+
+        return {
+            id: event.eventId ?? "",
+            title: event.title,
+            description: event.description,
+            headline: event.headline ?? "",
+            notes: event.notes ?? "Don't forget your ID for verification. See you there!",
+            time: event.time ? formatTime(event.time) : "TBD",
+            date: event.date ?? "TBD",
+            timeline: event.timeline, // custom formatter, or just event.createdAt
+            imageUrl: event.imageUrl ?? "https://dummyimage.com/1280x720/fff/aaa",
+            isRegistered: event.isRegistered ?? false,
+            attended: event.attended ?? false,
+            venue: event.venue ?? "TBD",
+        };
+    });
+
+    useAppStore.getState().setState({events: mappedEvents});
+
+    return;
+}
+
+export const fetchEventWithoutPreload = async (userId: string) => {
 
     useAppStore.getState().setState({ loading: true });
 
-    
-    const response = await axios.get(`${apiBaseUrl}/api/events/${userId}`);
+    // const apiBaseUrl = useAppStore.getState().config?.apiBaseUrl;
+    const response = await axios.get(`${apiUrl}/api/events/${userId}`);
 
     useAppStore.getState().setState({ loading: false });
 
@@ -49,7 +85,8 @@ export const fetchEvents = async (userId: string) => {
 export const createEvent = async (eventData: any) => {
     useAppStore.getState().setState({ loading: true });
     try {
-        const response = await axios.post(`${apiBaseUrl}/api/event`, eventData);
+        // const apiBaseUrl = useAppStore.getState().config?.apiBaseUrl;
+        const response = await axios.post(`${apiUrl}/api/event`, eventData);
 
         if (response.status === 200) {
             enqueueSnackbar("Event created successfully", { variant: "success" });
@@ -69,8 +106,8 @@ export const login = async (username: string, password: string) => {
     useAppStore.getState().setState({ loading: true });
 
     try {
-
-        const response = await axios.post(`${apiBaseUrl}/api/auth/login`, {
+        // const apiBaseUrl = useAppStore.getState().config?.apiBaseUrl;
+        const response = await axios.post(`${apiUrl}/api/auth/login`, {
             username,
             password
         });
@@ -120,7 +157,8 @@ export const login = async (username: string, password: string) => {
 export const register = async (userId: string, eventId: string) => {
     useAppStore.getState().setState({ loading: true });
     try {  
-        const response = await axios.post(`${apiBaseUrl}/api/event/register`, {
+        // const apiBaseUrl = useAppStore.getState().config?.apiBaseUrl;
+        const response = await axios.post(`${apiUrl}/api/event/register`, {
             userId,
             eventId
         });
@@ -146,8 +184,8 @@ export const signUp = async (formData: any) => {
        try {
 
         useAppStore.getState().setState({ loading: true });
-        
-        const response = await axios.post(`${apiBaseUrl}/api/auth/register`, formData)
+        // const apiBaseUrl = useAppStore.getState().config?.apiBaseUrl;
+        const response = await axios.post(`${apiUrl}/api/auth/register`, formData)
 
         if(response.status === 200){
             console.log("Profile updated successfully:", response.data);
@@ -178,8 +216,8 @@ export const updateProfile = async (userId: string, formData: any, base64Image: 
         ...formData,
         imageBase64: base64Image, // base64 string if changed, or null
       };
-  
-      const response = await axios.put(`${apiBaseUrl}/api/profile/${userId}`, payload);
+    //   const apiBaseUrl = useAppStore.getState().config?.apiBaseUrl;
+      const response = await axios.put(`${apiUrl}/api/profile/${userId}`, payload);
       
       if(response.status === 200) {
         // Update successful
@@ -203,7 +241,8 @@ export const updateProfile = async (userId: string, formData: any, base64Image: 
   };
 
 export const deleteEvent = async (eventId: string) => {
-    const response = await axios.delete(`${apiBaseUrl}/api/event/${eventId}`)
+    // const apiBaseUrl = useAppStore.getState().config?.apiBaseUrl;
+    const response = await axios.delete(`${apiUrl}/api/event/${eventId}`)
 
     if (response.status === 200) {
         enqueueSnackbar("Event deleted successfully", { variant: "success" });
@@ -216,7 +255,8 @@ export const deleteEvent = async (eventId: string) => {
 export const updateEvent = async (eventData: any) => {
     useAppStore.getState().setState({ loading: true });
     try {
-        const response = await axios.put(`${apiBaseUrl}/api/event`, eventData);
+        // const apiBaseUrl = useAppStore.getState().config?.apiBaseUrl;
+        const response = await axios.put(`${apiUrl}/api/event`, eventData);
 
         if (response.status === 200) {
             enqueueSnackbar("Event updated successfully", { variant: "success" });
@@ -236,8 +276,9 @@ export const handleQRCodeResult = async (qrData: string) => {
     try {
       const payload = JSON.parse(qrData); // or parse manually if it's not JSON
       const { eventId, userId } = payload;
-  
-      const res = await axios.post(`${apiBaseUrl}/api/event/confirm-attendance`, {
+      
+    //   const apiBaseUrl = useAppStore.getState().config?.apiBaseUrl;
+      const res = await axios.post(`${apiUrl}/api/event/confirm-attendance`, {
         eventId,
         userId,
       });
