@@ -1,23 +1,22 @@
 import React from "react";
-import '@fortawesome/fontawesome-free/css/all.css';
 import { useAppStore } from "../store/useAppStore";
-import EventDetailsCard from "../components/EventDetailsCard";
+import EventListWrapper from "../components/EventListWrapper"; // ✅ correct path
+import type { EventDetailsCardProps } from "../components/EventDetailsCard";
 
 const EventsList: React.FC = () => {
- const events = useAppStore((state) => state.events);
- const isAdmin = useAppStore((state) => state.isAdmin);
- const isStudent = useAppStore((state) => state.isStudent);
+  const events = useAppStore((state) => state.events);
+  const isAdmin = useAppStore((state) => state.isAdmin);
+  const isStudent = useAppStore((state) => state.isStudent);
 
   const handleAddEvent = () => {
-  
     const defaultEvent = {
       eventId: '',
       title: '',
       description: '',
       headline: '',
-      notes: 'Don\'t forget your ID for verification. See you there!',
+      notes: 'Bring your ID for entry.',
       date: '',
-      location: '',
+      venue: '',
       time: '',
       imageUrl: '',
       link: '',
@@ -27,52 +26,44 @@ const EventsList: React.FC = () => {
       selectedEvent: defaultEvent,
       showEventForm: true,
       showEvents: false,
-      isEdit: false
+      isEdit: false,
     });
-};
+  };
+
+  const formattedEvents: EventDetailsCardProps[] = events.map((ev) => ({
+    eventId: ev.id,
+    title: ev.title,
+    description: ev.description,
+    headline: ev.headline,
+    notes: ev.notes,
+    date: ev.date,
+    venue: ev.venue,
+    time: ev.time,
+    imageUrl: ev.imageUrl,
+    link: `/event-details/${ev.id}`,
+    isStudent,
+    isAdmin,
+    isRegistered: ev.isRegistered,
+    attended: ev.attended,
+    qrValue: ev.isRegistered
+      ? JSON.stringify({
+          eventId: ev.id,
+          userId: useAppStore.getState().userData?.userId,
+        })
+      : undefined,
+  }));
 
   return (
     <div className="feed-list container-fluid px-3">
-      {/* Admin Add Event Button */}
-      <div className="d-flex justify-content-end mb-3">
-        {isAdmin && (
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={handleAddEvent}
-          >
+      {isAdmin && (
+        <div className="d-flex justify-content-end mb-3">
+          <button className="btn btn-primary" onClick={handleAddEvent}>
             <i className="fas fa-plus pe-2"></i> Add New Event
           </button>
-        )}
-      </div>
-      {events.map((ev, index) => (
-        <EventDetailsCard
-          eventId={ev.id}
-          key={index}
-          title={ev.title || "Event Title"}
-          description={ev.description || "No description available."}
-          date={ev.date || "TBD"}
-          headline= {ev.headline || ""}
-          notes={ev.notes || "Don't forget your ID for verification. See you there!"}
-          venue={ev.venue || "TBD"}
-          time={ev.time || "TBD"}
-          imageUrl={ev.imageUrl}
-          link={`/event-details/${ev.id}`}
-          isStudent={isStudent}
-          isAdmin={isAdmin}
-          isRegistered={ev.isRegistered}
-          attended={ev.attended}
-          qrValue={
-            ev.isRegistered
-              ? JSON.stringify({
-                  eventId: ev.id,
-                  userId: useAppStore.getState().userData?.userId,
-                })
-              : undefined
-          }
-        />
-      ))}
-      
+        </div>
+      )}
+
+      <EventListWrapper events={formattedEvents} />
     </div>
   );
 };

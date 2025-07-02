@@ -183,4 +183,5 @@ const userData = useAppStore((state) => state.userData);
   );
 };
 
+export type { EventDetailsCardProps };
 export default EventDetailsCard;
