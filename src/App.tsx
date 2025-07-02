@@ -26,13 +26,13 @@ function App() {
   const showRegister = useAppStore((state) => state.showRegister);
   // const signalRUrl = useAppStore.getState().config?.signalRUrl;
 
-  const signalRUrl = import.meta.env.VITE_API_BASE_URL;
+  const signalRUrl = import.meta.env.VITE_SIGNALR_URL;
 
-  fetch('/config.json')
-  .then((res) => res.json())
-  .then((config) => {
-    useAppStore.getState().setConfig(config);
-  });
+  // fetch('/config.json')
+  // .then((res) => res.json())
+  // .then((config) => {
+  //   useAppStore.getState().setConfig(config);
+  // });
   
    useSignalR(`${signalRUrl}`, async (message) => {
   
