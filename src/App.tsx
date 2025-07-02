@@ -13,7 +13,7 @@ import { useAppStore } from './store/useAppStore';
 import Modal from './components/Modal';
 import Login from './components/Login';
 import { useSignalR } from './service/useSignalR';
-import { fetchEvents } from './service/api';
+import { fetchEventWithoutPreload } from './service/api';
 import Register from './components/Register';
 import { useEffect } from 'react';
 
@@ -22,7 +22,9 @@ function App() {
   const showLogin = useAppStore((state) => state.showLogin);
   const userData = useAppStore((state) => state.userData);
   const showRegister = useAppStore((state) => state.showRegister);
-  const signalRUrl = useAppStore.getState().config?.signalRUrl;
+  // const signalRUrl = useAppStore.getState().config?.signalRUrl;
+
+  const signalRUrl = import.meta.env.VITE_API_BASE_URL;
 
   fetch('/config.json')
   .then((res) => res.json())
@@ -37,7 +39,7 @@ function App() {
         console.log("EventListUpdated received from SignalR");
         if (userData && userData.userId) {
           console.log("Fetching events for userId:", userData.userId);
-          await fetchEvents(userData.userId);
+          await fetchEventWithoutPreload(userData.userId);
         } else {
           console.warn("User data or userId is null");
         }
