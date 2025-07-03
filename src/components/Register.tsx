@@ -2,62 +2,109 @@ import { useEffect, useState } from "react";
 import { useAppStore } from "../store/useAppStore";
 import { signUp } from "../service/api";
 
-
 interface RegisterFormProps {
-    student: {
-      studentNumber: string;
-      firstname: string;
-      lastname: string;
-      college: string
-      email: string;
-      alternativeEmail: string;
-      password: string;
-    };
-  //   onSave: (updated: any) => void;
-  }
+  student: {
+    studentNumber: string;
+    firstname: string;
+    lastname: string;
+    college: string;
+    email: string;
+    alternativeEmail: string;
+    password: string;
+  };
+}
 
-const Register : React.FC<RegisterFormProps> = ({student}) => {
- const [formData, setFormData] = useState({
-    ...student,
-  });
+const Register: React.FC<RegisterFormProps> = ({ student }) => {
+  const [formData, setFormData] = useState({ ...student });
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   useEffect(() => {
-      setFormData({ ...student });
-    }, [student]);
-  
+    setFormData({ ...student });
+  }, [student]);
 
- const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-     const { name, value } = e.target;
-     setFormData((prev) => ({
-       ...prev,
-       [name]: value,
-     }));
-   };
-   
-   
-const handleSignIn = async () => {
+const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const { name, value } = e.target;
 
-    useAppStore.getState().setState({
-        userAuthenticated: false,
-        showLogin: true,
-        showRegister: false
-    })
+  // Update the field
+  setFormData((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
 
-}
+  // Run field-level validation as the user types
+  const error = validateField(name, value);
+  setErrors((prev) => ({
+    ...prev,
+    [name]: error,
+  }));
+};
 
-const handleSignUp = async () => {
+const validateField = (name: string, value: string) => {
+  const nameRegex = /^[A-Za-z\s]+$/;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  //const numberRegex = /^[0-9]{8,10}$/;
+  //const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,}$/;
+
+  switch (name) {
+    case "studentNumber":
+      if (!value.trim()) return "Student number is required.";
+      //if (!numberRegex.test(value)) return "Must be 8–10 digits.";
+      break;
+    case "firstname":
+    case "lastname":
+      if (!value.trim()) return `${name === "firstname" ? "First" : "Last"} name is required.`;
+      if (!nameRegex.test(value)) return "Letters only.";
+      break;
+    case "college":
+      if (!value.trim()) return "College/Program is required.";
+      if (!nameRegex.test(value)) return "Letters and spaces only.";
+      break;
+    case "email":
+    case "alternativeEmail":
+      if (!value.trim()) return "Email is required.";
+      if (!emailRegex.test(value)) return "Invalid email format.";
+      break;
+    case "password":
+      if (!value.trim()) return "Password is required.";
+      //if (!passwordRegex.test(value)) return "At least 6 chars w/ letters & numbers.";
+      break;
+  }
+  return "";
+};
+
+const validate = () => {
+  const newErrors: { [key: string]: string } = {};
+  Object.entries(formData).forEach(([key, value]) => {
+    const error = validateField(key, value);
+    if (error) newErrors[key] = error;
+  });
+  return newErrors;
+};
+
+  const handleSignUp = async () => {
+    const validationErrors = validate();
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
 
     await signUp(formData);
+  };
 
-}
+  const handleSignIn = async () => {
+    useAppStore.getState().setState({
+      userAuthenticated: false,
+      showLogin: true,
+      showRegister: false,
+    });
+  };
 
-return (
-<main className="main-content mt-0">
+  return (
+    <main className="main-content mt-0">
       <section>
         <div className="page-header min-vh-100">
           <div className="container">
             <div className="row">
-              {/* Form Panel */}
               <div className="col-xl-4 col-lg-5 col-md-7 d-flex flex-column mx-lg-0 mx-auto">
                 <div className="card card-plain">
                   <div className="card-header pb-0 text-left">
@@ -65,38 +112,39 @@ return (
                     <p className="mb-0">Enter your details</p>
                   </div>
                   <div className="card-body pb-3">
-                    <form role="form">
-                     <label>Student Number</label>
-                      <div className="mb-3">
-                        <input type="text" className="form-control" name="studentNumber" placeholder="Name" aria-label="Name" value={formData.studentNumber} onChange={handleChange}/>
-                      </div>
-                      <label>Firstname</label>
-                      <div className="mb-3">
-                        <input type="text" className="form-control" name="firstname" placeholder="Name" aria-label="Name" value={formData.firstname} onChange={handleChange}/>
-                      </div>
-                      <label>Lastname</label>
-                      <div className="mb-3">
-                        <input type="text" className="form-control" name="lastname" placeholder="Name" aria-label="Name" value={formData.lastname} onChange={handleChange}/>
-                      </div>
-                      <label>College/Program</label>
-                      <div className="mb-3">
-                        <input type="text" className="form-control" name="college" placeholder="Name" aria-label="Name" value={formData.college} onChange={handleChange}/>
-                      </div>
-                      <label>Email</label>
-                      <div className="mb-3">
-                        <input type="email" className="form-control" name="email" placeholder="Email" aria-label="Email" value={formData.email} onChange={handleChange}/>
-                      </div>
-                      <label>Alternative Email</label>
-                      <div className="mb-3">
-                        <input type="email" className="form-control" name="alternativeEmail" placeholder="Name" aria-label="Name" value={formData.alternativeEmail} onChange={handleChange}/>
-                      </div>
-                      <label>Password</label>
-                      <div className="mb-3">
-                        <input type="password" className="form-control" name="password" placeholder="Name" aria-label="Name" value={formData.password} onChange={handleChange}/>
-                      </div>
-                                         
+                    <form role="form" onSubmit={(e) => e.preventDefault()}>
+                      {[
+                        { label: "Student Number", name: "studentNumber" },
+                        { label: "Firstname", name: "firstname" },
+                        { label: "Lastname", name: "lastname" },
+                        { label: "College/Program", name: "college" },
+                        { label: "Email", name: "email", type: "email" },
+                        { label: "Alternative Email", name: "alternativeEmail", type: "email" },
+                        { label: "Password", name: "password", type: "password" },
+                      ].map((field) => (
+                        <div className="mb-3" key={field.name}>
+                          <label>{field.label}</label>
+                          <input
+                            type={field.type || "text"}
+                            className={`form-control ${errors[field.name] ? "is-invalid" : ""}`}
+                            name={field.name}
+                            placeholder={field.label}
+                            aria-label={field.label}
+                            value={(formData as any)[field.name]}
+                            onChange={handleChange}
+                          />
+                          {errors[field.name] && (
+                            <div className="invalid-feedback">{errors[field.name]}</div>
+                          )}
+                        </div>
+                      ))}
+
                       <div className="text-center">
-                        <button type="button" className="btn btn-primary w-100 mt-4 mb-0" onClick={handleSignUp}>
+                        <button
+                          type="button"
+                          className="btn btn-primary w-100 mt-4 mb-0"
+                          onClick={handleSignUp}
+                        >
                           Sign up
                         </button>
                       </div>
@@ -104,7 +152,7 @@ return (
                   </div>
                   <div className="card-footer text-center pt-0 px-sm-4 px-1">
                     <p className="mb-4 mx-auto">
-                      Already have an account?{' '}
+                      Already have an account?{" "}
                       <a href="#" className="text-primary font-weight-bold" onClick={handleSignIn}>
                         Sign in
                       </a>
@@ -113,14 +161,13 @@ return (
                 </div>
               </div>
 
-              {/* Right Illustration Panel */}
               <div className="col-6 d-lg-flex d-none h-100 my-auto pe-0 position-absolute top-0 end-0 text-center justify-content-center flex-column">
                 <div
                   className="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center overflow-hidden"
                   style={{
                     backgroundImage:
                       "url('https://raw.githubusercontent.com/creativetimofficial/public-assets/master/argon-dashboard-pro/assets/img/signup-ill.jpg')",
-                    backgroundSize: 'cover',
+                    backgroundSize: "cover",
                   }}
                 >
                   <span className="mask bg-primary opacity-4"></span>
@@ -137,8 +184,7 @@ return (
         </div>
       </section>
     </main>
-)
-
-}
+  );
+};
 
 export default Register;

@@ -121,6 +121,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isDesktop, toggleSidebar }) =
                     onClick={showProfile}
                   >
                     <span className="sidenav-mini-icon">S</span>
+                    <i className="fa fa-user" style={{ color: 'black' }}></i> 
                     <span className="sidenav-normal">Profile</span>
                   </a>
                 </li>
@@ -131,6 +132,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isDesktop, toggleSidebar }) =
                     onClick={showEvents}
                     >
                     <span className="sidenav-mini-icon">B</span>
+                     <i className="fa fa-calendar" style={{ color: 'black' }}></i> 
                     <span className="sidenav-normal">Events</span>
                     
                   </a>
@@ -143,6 +145,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, isDesktop, toggleSidebar }) =
                     onClick={showScanner}
                     >
                     <span className="sidenav-mini-icon">V</span>
+                    <i className="fas fa-qrcode" style={{ color: 'black' }}></i> 
                     <span className="sidenav-normal">Scan Invitation</span>
                     
                   </a>
