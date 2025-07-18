@@ -105,7 +105,28 @@ const validate = () => {
         <div className="page-header min-vh-100">
           <div className="container">
             <div className="row">
-              <div className="col-xl-4 col-lg-5 col-md-7 d-flex flex-column mx-lg-0 mx-auto">
+              {/* Background Image*/}
+              <div className="col-6 d-lg-flex d-none h-100 my-auto pe-0 position-absolute top-0 start-0 text-center justify-content-center flex-column">
+                <div
+                  className="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center overflow-hidden"
+                  style={{
+                    backgroundImage:
+                      "url('https://raw.githubusercontent.com/creativetimofficial/public-assets/master/argon-dashboard-pro/assets/img/signup-ill.jpg')",
+                    backgroundSize: "cover",
+                  }}
+                >
+                  <span className="mask bg-primary opacity-4"></span>
+                  <h4 className="mt-5 text-white font-weight-bolder position-relative">
+                    Your journey starts here
+                  </h4>
+                  <p className="text-white position-relative">
+                    Just as it takes a company to sustain a product, it takes a community to sustain a protocol.
+                  </p>
+                </div>
+              </div>
+
+               {/* Sign-up Form - now on the right */}
+              <div className="col-xl-4 col-lg-5 col-md-7 d-flex flex-column ms-auto me-auto ms-lg-auto me-lg-5">
                 <div className="card card-plain">
                   <div className="card-header pb-0 text-left">
                     <h4 className="font-weight-bolder">Sign Up</h4>
@@ -158,25 +179,6 @@ const validate = () => {
                       </a>
                     </p>
                   </div>
-                </div>
-              </div>
-
-              <div className="col-6 d-lg-flex d-none h-100 my-auto pe-0 position-absolute top-0 end-0 text-center justify-content-center flex-column">
-                <div
-                  className="position-relative bg-gradient-primary h-100 m-3 px-7 border-radius-lg d-flex flex-column justify-content-center overflow-hidden"
-                  style={{
-                    backgroundImage:
-                      "url('https://raw.githubusercontent.com/creativetimofficial/public-assets/master/argon-dashboard-pro/assets/img/signup-ill.jpg')",
-                    backgroundSize: "cover",
-                  }}
-                >
-                  <span className="mask bg-primary opacity-4"></span>
-                  <h4 className="mt-5 text-white font-weight-bolder position-relative">
-                    Your journey starts here
-                  </h4>
-                  <p className="text-white position-relative">
-                    Just as it takes a company to sustain a product, it takes a community to sustain a protocol.
-                  </p>
                 </div>
               </div>
             </div>

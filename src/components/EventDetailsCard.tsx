@@ -1,13 +1,12 @@
-import React from 'react';
+//import React from 'react';
 import '@fortawesome/fontawesome-free/css/all.css';
 import { deleteEvent, register } from '../service/api';
 import { useAppStore } from '../store/useAppStore';
 import QRCode from 'react-qr-code';
-import Confetti from 'react-confetti';
-
+import React, { useState } from 'react';
 
 interface EventDetailsCardProps {
-  eventId: string; // Assuming eventId is passed as a prop
+  eventId: string;
   title: string;
   description: string;
   headline: string;
@@ -21,11 +20,11 @@ interface EventDetailsCardProps {
   isAdmin: boolean;
   isRegistered: boolean;
   attended: boolean;
-  qrValue?: string; // QR code value, if applicable
+  qrValue?: string;
 }
 
 const EventDetailsCard: React.FC<EventDetailsCardProps> = ({
-  eventId, // Assuming eventId is passed as a prop
+  eventId,
   title,
   description,
   date,
@@ -41,22 +40,14 @@ const EventDetailsCard: React.FC<EventDetailsCardProps> = ({
   attended,
   qrValue
 }) => {
-
-const userData = useAppStore((state) => state.userData);
-// const [qrCodeValue, setQrCodeValue] = useState<string | null>(null);
-// const [registered, setRegistered] = useState(isRegistered);
-
-
+  const userData = useAppStore((state) => state.userData);
+  const [showMore, setShowMore] = useState(false);
 
   const handleRegister = (eventId: string) => async () => {
-      if (userData?.userId) {  
-        // const qrCodeValue = `${eventId}:${userData.userId}`;
-        register(userData.userId, eventId);
-
-        // setRegistered(true);
-        // setQrValue(`${eventId}:${userData.userId}`); 
-    };
-  }
+    if (userData?.userId) {
+      register(userData.userId, eventId);
+    }
+  };
 
   const handleDeleteEvent = (eventId: string) => async () => {
     useAppStore.getState().openModal({
@@ -70,8 +61,7 @@ const userData = useAppStore((state) => state.userData);
         console.log("Event deleted");
       }
     });
-   
-  }
+  };
 
   const handleEditEvent = (eventId: string) => async () => {
     useAppStore.getState().setState({
@@ -91,20 +81,17 @@ const userData = useAppStore((state) => state.userData);
       showEvents: false,
       isEdit: true
     });
-  }
+  };
 
   return (
-    <main className="main-content">    
-      <div className="card mb-4 shadow-sm border-radius-lg overflow-hidden">
-      {attended && ( <Confetti
-          numberOfPieces={150}
-          recycle={true}
-          width={window.innerWidth}
-          height={window.innerHeight}
-        />)}
+    <main className="main-content">
+      <div
+        className={`card mb-4 shadow-sm border-radius-lg overflow-hidden ${attended ? 'bg-success text-white' : ''
+          }`}
+      >
         <div className="position-relative">
           <img
-            src={imageUrl || "https://dummyimage.com/1280x720/fff/aaa"}
+            src={imageUrl}
             alt="Event Poster"
             className="w-100"
             style={{ maxHeight: "300px", objectFit: "cover" }}
@@ -112,64 +99,67 @@ const userData = useAppStore((state) => state.userData);
           <div className="position-absolute top-0 end-0 p-3 d-flex flex-column align-items-end">
             {isStudent && !isRegistered && (
               <button
-            type="button"
-            className="btn btn-sm btn-primary mb-2"
-            onClick={handleRegister(eventId)} // Replace with actual event ID
+                type="button"
+                className="btn btn-sm btn-primary mb-2"
+                onClick={handleRegister(eventId)}
               >
-            <i className="fas fa-plus pe-2"></i> Register
+                <i className="fas fa-plus pe-2"></i> Register
               </button>
             )}
+
             {isStudent && isRegistered && attended && (
               <span className="badge bg-info mb-2">
-            <i className="fas fa-clipboard-user me-1"></i> Attended
+                <i className="fas fa-clipboard-user me-1"></i> Attended
               </span>
             )}
-            {isStudent &&  isRegistered && !attended &&(
+
+            {isStudent && isRegistered && !attended && (
               <span className="badge bg-success mb-2">
-            <i className="fas fa-check-circle me-1"></i> Registered
+                <i className="fas fa-check-circle me-1"></i> Registered
               </span>
             )}
-             {isStudent && isRegistered && qrValue && !attended && (
-                <div
-                  className="position-absolute mt-2"
-                  style={{
-                    top: '90px',
-                    right: '12px',
-                    background: 'white',
-                    padding: '4px',
-                    borderRadius: '8px',
-                    zIndex: 5,
-                  }}
-                >
-                  <QRCode value={qrValue} size={200} />
-                </div>
-              )}
-            {isAdmin && (
-              <button
-            type="button"
-            className="btn btn-sm btn-danger mb-2"       
-            onClick={handleDeleteEvent(eventId)} // Replace with actual event ID
+
+            {isStudent && isRegistered && qrValue && !attended && (
+              <div
+                className="position-absolute mt-2"
+                style={{
+                  top: '90px',
+                  right: '12px',
+                  background: 'white',
+                  padding: '4px',
+                  borderRadius: '8px',
+                  zIndex: 5,
+                }}
               >
-            <i className="fas fa-trash pe-2"></i> Delete
-              </button>
+                <QRCode value={qrValue} size={200} />
+              </div>
             )}
+
             {isAdmin && (
-              <button
-            type="button"
-            className="btn btn-sm btn-warning"
-            onClick={handleEditEvent(eventId)} // Replace with actual event ID
-              >
-            <i className="fas fa-edit pe-2"></i> Edit
-              </button>
+              <>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-danger mb-2"
+                  onClick={handleDeleteEvent(eventId)}
+                >
+                  <i className="fas fa-trash pe-2"></i> Delete
+                </button>
+                <button
+                  type="button"
+                  className="btn btn-sm btn-warning"
+                  onClick={handleEditEvent(eventId)}
+                >
+                  <i className="fas fa-edit pe-2"></i> Edit
+                </button>
+              </>
             )}
           </div>
         </div>
 
-        {/* Content */}
         <div className="card-body">
-          <h4 className="text-dark font-weight-bold">{title}</h4>
-          <h5 className="text-dark font-weight-bold">{headline}</h5>
-          <p className="text-sm text-muted">{description}</p>
+          <h4 className="font-weight-bold">{title}</h4>
+          <h5 className="font-weight-bold">{headline}</h5>
+          <p className="text-sm">{description}</p>
 
           <p className="text-sm">
             <strong>Date:</strong> {date}<br />
@@ -177,13 +167,36 @@ const userData = useAppStore((state) => state.userData);
             <strong>Time:</strong> {time}
           </p>
 
-          <p className="text-sm text-secondary">
-           {notes}
-          </p>
+          <p className="text-sm">{notes}</p>
 
-          <a href={link} className="btn btn-sm btn-info mt-2">
+          {/* Uncomment if you want to show the link button*/}
+          {/*<a href={link} className={`btn btn-sm ${attended ? 'btn-light' : 'btn-info'} mt-2`}>
             <i className="fas fa-arrow-right me-2"></i> Read More
-          </a>       
+          </a>*/}
+
+          <button
+            className="btn btn-sm btn-info mt-2"
+            onClick={() => setShowMore(!showMore)}
+          >
+            <i className="fas fa-arrow-right me-2"></i> {showMore ? 'Show Less' : 'Read More'}
+          </button>
+
+          {showMore && (
+            <div className="mt-4 p-3 bg-white text-dark border rounded shadow-sm">
+              <h5 className="text-primary fw-bold mb-2">Why Should You Join?</h5>
+              <p>
+                ✨ This is more than just an event — it's a chance to grow, network, and be inspired. <br />
+                🧠 Learn from professionals, ask questions, and get firsthand experience that textbooks can't provide.<br />
+                🤝 Meet fellow students and industry experts who share your passion and drive.<br />
+                🎯 Whether you're aiming to enhance your skills or just want to explore new opportunities, this is your moment!
+              </p>
+              <blockquote className="blockquote text-success fst-italic mt-3">
+                “Opportunities don’t happen. You create them.”
+              </blockquote>
+              <p className="mt-2 mb-0">Don’t miss out. Be part of something meaningful.</p>
+            </div>
+          )}
+
         </div>
       </div>
     </main>
